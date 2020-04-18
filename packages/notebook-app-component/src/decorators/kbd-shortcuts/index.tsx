@@ -88,7 +88,7 @@ export class KeyboardShortcuts extends React.Component<Props> {
     if (focusedCell) {
       // NOTE: Order matters here because we need it to execute _before_ we
       // focus the next cell
-      executeFocusedCell({ contentRef });
+      const exec_status = executeFocusedCell({ contentRef });
 
       if (e.shiftKey) {
         /** Get the next cell and check if it is a markdown cell. */

@@ -345,7 +345,7 @@ export function sendExecuteRequestEpic(
             }
 
             /**
-             * Only code cells can be execute so we throw an error
+             * Only code cells can be execute so we cancel the execution
              * if an attempt to execute a non-code cell is made.
              */
             if (
@@ -354,14 +354,7 @@ export function sendExecuteRequestEpic(
               !cell.get("cell_type", null)
             ) {
               return of(
-                actions.executeFailed({
-                  error: new Error(
-                    `Can only execute code cells but recieved ${cell.get(
-                      "cell_type",
-                      null
-                    )} cell.`
-                  ),
-                  code: errors.EXEC_INVALID_CELL_TYPE,
+                actions.executeCanceled({
                   contentRef,
                   id
                 })
@@ -370,16 +363,12 @@ export function sendExecuteRequestEpic(
 
             /**
              * We cannot execute cells with no content, so
-             * we through an error action if this is the case.
+             * we canccel the execution action if this is the case.
              */
             const source = cell.get("source", "");
             if (source === "") {
               return of(
-                actions.executeFailed({
-                  error: new Error(
-                    "Cannot execute cells with no source content."
-                  ),
-                  code: errors.EXEC_NO_SOURCE_ERROR,
+                actions.executeCanceled({
                   contentRef,
                   id
                 })
