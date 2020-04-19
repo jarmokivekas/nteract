@@ -107,6 +107,52 @@ export function executeFocusedCellEpic(
           })
         );
       }
+
+      /* Retirieve cell for contentRef to check if it is executable */
+      const cell = selectors.notebook.cellById(model, {
+        id
+      });
+
+      // RID:JK almost the same check as in sendExecuteRequestEpic
+      // but don't raise errors. Not sure if executeCanceled
+      // is used right here, but the point is returns
+      // something that is not an actions.executeFailed()
+      /**
+       * Only code cells can be executed, cancel execution
+       * if an attempt to execute a non-code cell is made.
+       * Avoid raising EXEC_INVALID_CELL_TYPE
+       */
+      if (
+        cell.get("cell_type", null) === "markdown" ||
+        cell.get("cell_type", null) === "raw" ||
+        !cell.get("cell_type", null)
+      ) {
+        return of(
+          // RID:JK:
+          actions.executeCanceled({
+            contentRef,
+            id
+          })
+        );
+      }
+
+      /**
+       * We cannot execute cells with no content, cancel the
+       * execution what that is the case
+       * Avoid raising EXEC_NO_SOURCE_ERROR
+       */
+      const source = cell.get("source", "");
+      if (source === "") {
+        return of(
+          actions.executeCanceled({
+            contentRef,
+            id
+          })
+        );
+      }
+
+
+
       return of(
         actions.executeCell({ id, contentRef: action.payload.contentRef })
       );

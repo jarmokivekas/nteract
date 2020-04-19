@@ -88,6 +88,10 @@ export class KeyboardShortcuts extends React.Component<Props> {
     if (focusedCell) {
       // NOTE: Order matters here because we need it to execute _before_ we
       // focus the next cell
+      // RID:JK It's easier to check for markdown and empty
+      // cells inside executeFocusedCell, because all the
+      // tooling for getting cells from a contentRef is already
+      // there. 
       executeFocusedCell({ contentRef });
 
       if (e.shiftKey) {
