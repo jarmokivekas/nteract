@@ -344,24 +344,14 @@ export function sendExecuteRequestEpic(
               );
             }
 
-            /**
-             * Only code cells can be execute so we throw an error
-             * if an attempt to execute a non-code cell is made.
+             /*
+             * Only code cells can be executed, we silently
+             * cancel execution for other types of cells (e.g markdown)
              */
-            if (
-              cell.get("cell_type", null) === "markdown" ||
-              cell.get("cell_type", null) === "raw" ||
-              !cell.get("cell_type", null)
-            ) {
+            const isCodeCell = cell.get("cell_type", null) === "code"
+            if (!isCodeCell) {
               return of(
-                actions.executeFailed({
-                  error: new Error(
-                    `Can only execute code cells but recieved ${cell.get(
-                      "cell_type",
-                      null
-                    )} cell.`
-                  ),
-                  code: errors.EXEC_INVALID_CELL_TYPE,
+                actions.executeCanceled({
                   contentRef,
                   id
                 })
@@ -369,23 +359,18 @@ export function sendExecuteRequestEpic(
             }
 
             /**
-             * We cannot execute cells with no content, so
-             * we through an error action if this is the case.
+             * We cannot execute cells with no content,
+             * silently cancel exectuion if there is no content
              */
             const source = cell.get("source", "");
             if (source === "") {
               return of(
-                actions.executeFailed({
-                  error: new Error(
-                    "Cannot execute cells with no source content."
-                  ),
-                  code: errors.EXEC_NO_SOURCE_ERROR,
+                actions.executeCanceled({
                   contentRef,
                   id
                 })
               );
             }
-
             /**
              * Get the kernel associated with the content model that
              * we are aexecuting from and its channels. `channels` is
