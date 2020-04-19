@@ -348,10 +348,6 @@ export function sendExecuteRequestEpic(
              * Only code cells can be execute so we throw an error
              * if an attempt to execute a non-code cell is made.
              */
-            // RID:JK this check, and the one after should be either
-            // 1. not an error, but a silent execution cancel
-            // 2. the error needs to be caught and accepted
-            // 3. We make this check also earlier, so these are never triggered
             if (
               cell.get("cell_type", null) === "markdown" ||
               cell.get("cell_type", null) === "raw" ||
@@ -376,8 +372,6 @@ export function sendExecuteRequestEpic(
              * We cannot execute cells with no content, so
              * we through an error action if this is the case.
              */
-            // RID:JK this is also causing distracting notifications
-            // in normal use. Should be handled similar to markdown cells
             const source = cell.get("source", "");
             if (source === "") {
               return of(
