@@ -116,7 +116,10 @@ export function executeFocusedCellEpic(
       // RID:JK almost the same check as in sendExecuteRequestEpic
       // but don't raise errors. Not sure if executeCanceled
       // is used right here, but the point is returns
-      // something that is not an actions.executeFailed()
+      // something that is not an actions.executeFailed().
+      // executeCanceled works in practice when testing manually
+      // as far I can see
+
       /**
        * Only code cells can be executed, cancel execution
        * if an attempt to execute a non-code cell is made.
