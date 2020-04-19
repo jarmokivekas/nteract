@@ -107,8 +107,6 @@ export function executeFocusedCellEpic(
           })
         );
       }
-
-
       return of(
         actions.executeCell({ id, contentRef: action.payload.contentRef })
       );
